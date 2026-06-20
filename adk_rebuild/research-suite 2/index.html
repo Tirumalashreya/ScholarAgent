@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Academic Research &amp; Writing Suite — Welcome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#f7f4ee; --paper-2:#f1ede4; --surface:#fffefb;
+  --ink:#211e19; --ink-2:#4c4740; --ink-3:#857d70; --ink-4:#a9a092;
+  --line:#e6e0d3; --line-2:#efebe1;
+  --indigo:#3c43a0; --indigo-2:#4f57c4; --indigo-tint:#ecedfa;
+  --ochre:#9a6b1f; --ochre-tint:#f6ecd8;
+  --a-orch:#3c43a0; --a-orch-t:#ecedfa;
+  --a-research:#0f7b76; --a-research-t:#dcf1ef;
+  --a-writer:#8a4bbd; --a-writer-t:#f1e6f9;
+  --a-editor:#2f7d46; --a-editor-t:#e0f1e5;
+  --sans:"IBM Plex Sans",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;}
+body{
+  font-family:var(--sans); color:var(--ink); background:var(--paper);
+  -webkit-font-smoothing:antialiased; overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+a{color:inherit;text-decoration:none;}
+
+/* faint paper texture */
+.stage{
+  position:fixed; inset:0; display:grid; place-items:center;
+  background:
+    radial-gradient(1100px 700px at 50% -10%, #fffdf8 0%, var(--paper) 60%),
+    var(--paper);
+}
+.stage::before{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:repeating-linear-gradient(0deg, rgba(33,30,25,.018) 0 1px, transparent 1px 34px);
+}
+
+/* top chrome */
+.top{
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; align-items:center; gap:14px;
+  padding:22px 30px;
+}
+.brand{display:flex;align-items:center;gap:11px;opacity:0;animation:fadeIn .8s .2s forwards;}
+.brand .mk{
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  background:linear-gradient(150deg,var(--indigo),var(--indigo-2));
+  box-shadow:0 4px 12px rgba(60,67,160,.3);
+}
+.brand .mk svg{width:18px;height:18px;color:#fff;}
+.brand .bt{font-size:13.5px;font-weight:700;letter-spacing:-.01em;line-height:1.15;}
+.brand .bt span{display:block;font-size:10.5px;font-weight:500;color:var(--ink-3);}
+.skip{
+  margin-left:auto; display:inline-flex; align-items:center; gap:7px;
+  font-size:13px;font-weight:600;color:var(--ink-3);
+  padding:8px 14px;border-radius:20px;border:1px solid var(--line);
+  background:var(--surface); transition:all .15s; opacity:0; animation:fadeIn .8s .4s forwards;
+}
+.skip:hover{color:var(--ink);border-color:var(--ink-4);}
+.skip svg{width:14px;height:14px;}
+
+/* progress dots */
+.progress{
+  position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:20;
+  display:flex; gap:8px; opacity:0; animation:fadeIn .8s .5s forwards;
+}
+.pdot{
+  width:34px;height:4px;border-radius:3px;background:var(--line);overflow:hidden;position:relative;
+  cursor:pointer;
+}
+.pdot i{position:absolute;inset:0;width:0;background:var(--indigo);border-radius:3px;}
+.pdot.done i{width:100%;}
+.pdot.active i{animation:fill var(--dur,5000ms) linear forwards;}
+@keyframes fill{to{width:100%;}}
+
+/* scenes */
+.scenes{position:relative;width:min(1080px,92vw);height:100vh;}
+.scene{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  padding:40px 20px; gap:0;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .6s ease, visibility .6s;
+}
+.scene.active{opacity:1;visibility:visible;pointer-events:auto;}
+
+/* reveal helpers — animate only when scene active */
+.r{opacity:0;transform:translateY(16px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
+.scene.active .r{opacity:1;transform:none;}
+.scene.active .r.d1{transition-delay:.10s;}
+.scene.active .r.d2{transition-delay:.22s;}
+.scene.active .r.d3{transition-delay:.34s;}
+.scene.active .r.d4{transition-delay:.46s;}
+.scene.active .r.d5{transition-delay:.58s;}
+.scene.active .r.d6{transition-delay:.70s;}
+.scene.active .r.d7{transition-delay:.82s;}
+
+.eyebrow{
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--indigo); margin-bottom:22px;
+  display:inline-flex;align-items:center;gap:9px;
+}
+.eyebrow .ln{width:26px;height:1.5px;background:var(--indigo);opacity:.5;}
+h1.head{
+  font-family:var(--serif); font-weight:600; letter-spacing:-.02em;
+  font-size:clamp(34px,5.4vw,62px); line-height:1.08; margin:0;
+  color:var(--ink); text-wrap:balance; max-width:16ch;
+}
+h1.head em{font-style:italic;color:var(--indigo);}
+.sub{
+  font-size:clamp(15px,1.7vw,19px); color:var(--ink-2); margin:22px 0 0;
+  max-width:52ch; line-height:1.55; text-wrap:pretty;
+}
+
+/* SCENE 2 — agent network */
+.netwrap{margin-top:8px;width:100%;max-width:920px;}
+.scene-title{
+  font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.4vw,38px);
+  margin:0 0 8px;letter-spacing:-.015em;
+}
+.scene-lead{font-size:clamp(14px,1.5vw,17px);color:var(--ink-3);margin:0 0 44px;max-width:50ch;}
+.net{
+  display:flex; align-items:flex-start; justify-content:center; gap:0;
+  flex-wrap:nowrap;
+}
+.agent-card{
+  position:relative; width:clamp(140px,17vw,184px); flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:0;
+}
+.agent-node{
+  width:62px;height:62px;border-radius:17px;display:grid;place-items:center;
+  background:var(--surface);border:1.5px solid var(--line);
+  box-shadow:0 6px 18px rgba(33,30,25,.07);
+  position:relative; z-index:2;
+}
+.agent-node svg{width:27px;height:27px;}
+.agent-card .a-nm{font-size:14px;font-weight:700;margin-top:14px;line-height:1.2;}
+.agent-card .a-role{font-size:11.5px;color:var(--ink-3);margin-top:5px;line-height:1.4;max-width:18ch;}
+.agent-card .a-tool{
+  font-family:var(--mono);font-size:9.5px;color:var(--ink-4);margin-top:8px;
+  background:var(--paper-2);padding:2px 7px;border-radius:5px;
+}
+/* connector between cards */
+.connector{
+  flex:1; min-width:24px; height:62px; display:flex; align-items:center; position:relative; z-index:1;
+}
+.connector .ln{
+  height:2px;width:100%;background:var(--line);position:relative;border-radius:2px;
+  transform:scaleX(0);transform-origin:left center;transition:transform .55s ease;
+}
+.connector .ln::after{
+  content:"";position:absolute;right:-1px;top:50%;transform:translateY(-50%) rotate(45deg);
+  width:7px;height:7px;border-top:2px solid var(--indigo);border-right:2px solid var(--indigo);
+  opacity:0;transition:opacity .3s .4s;
+}
+/* staged pop for nodes */
+.agent-card{opacity:0;transform:translateY(14px) scale(.96);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1);}
+.scene.active .agent-card{opacity:1;transform:none;}
+.scene.active .agent-card.s1{transition-delay:.15s;}
+.scene.active .agent-card.s2{transition-delay:.55s;}
+.scene.active .agent-card.s3{transition-delay:.95s;}
+.scene.active .agent-card.s4{transition-delay:1.35s;}
+.scene.active .connector.c1 .ln{transition-delay:.4s;transform:scaleX(1);}
+.scene.active .connector.c2 .ln{transition-delay:.8s;transform:scaleX(1);}
+.scene.active .connector.c3 .ln{transition-delay:1.2s;transform:scaleX(1);}
+.scene.active .connector .ln::after{opacity:1;}
+/* node hues */
+.agent-node.orch{background:var(--a-orch-t);border-color:var(--a-orch);color:var(--a-orch);}
+.agent-node.research{background:var(--a-research-t);border-color:var(--a-research);color:var(--a-research);}
+.agent-node.writer{background:var(--a-writer-t);border-color:var(--a-writer);color:var(--a-writer);}
+.agent-node.editor{background:var(--a-editor-t);border-color:var(--a-editor);color:var(--a-editor);}
+.agent-node .ping{
+  position:absolute;inset:-5px;border-radius:21px;border:2px solid currentColor;opacity:0;
+}
+.scene.active .agent-card.s1 .ping{animation:ping 2.2s 1s ease-out infinite;}
+.scene.active .agent-card.s2 .ping{animation:ping 2.2s 1.4s ease-out infinite;}
+.scene.active .agent-card.s3 .ping{animation:ping 2.2s 1.8s ease-out infinite;}
+.scene.active .agent-card.s4 .ping{animation:ping 2.2s 2.2s ease-out infinite;}
+@keyframes ping{0%{transform:scale(.92);opacity:.45;}100%{transform:scale(1.4);opacity:0;}}
+
+/* SCENE 3 — workflows */
+.flows3{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;max-width:920px;margin-top:6px;}
+.flow3{
+  width:clamp(220px,27vw,272px); background:var(--surface);
+  border:1px solid var(--line);border-radius:16px;padding:24px 22px;text-align:left;
+  box-shadow:0 8px 26px rgba(33,30,25,.06);
+}
+.flow3 .f3-ico{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px;}
+.flow3 .f3-ico svg{width:23px;height:23px;}
+.flow3 .f3-t{font-size:16px;font-weight:700;}
+.flow3 .f3-d{font-size:13px;color:var(--ink-3);margin-top:6px;line-height:1.5;}
+.flow3 .f3-p{
+  font-family:var(--mono);font-size:10.5px;color:var(--ink-4);margin-top:14px;
+  padding-top:13px;border-top:1px solid var(--line-2);letter-spacing:.01em;
+}
+
+/* SCENE 4 — output preview + launch */
+.launch-wrap{display:flex;flex-direction:column;align-items:center;}
+.mini-paper{
+  width:clamp(260px,30vw,320px); background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;box-shadow:0 14px 44px rgba(33,30,25,.12);
+  padding:26px 28px;text-align:left;margin-bottom:34px;position:relative;overflow:hidden;
+}
+.mini-paper .mp-venue{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--indigo);margin-bottom:9px;}
+.mini-paper .mp-title{font-family:var(--serif);font-weight:600;font-size:17px;line-height:1.2;margin-bottom:14px;}
+.mp-line{height:7px;border-radius:4px;background:var(--line-2);margin-bottom:8px;transform-origin:left;transform:scaleX(0);}
+.mp-line.short{width:62%;}
+.scene.active .mp-line{animation:drawLine .5s forwards;}
+.scene.active .mp-line.l1{animation-delay:.3s;}
+.scene.active .mp-line.l2{animation-delay:.42s;}
+.scene.active .mp-line.l3{animation-delay:.54s;}
+.scene.active .mp-line.l4{animation-delay:.66s;}
+.scene.active .mp-line.l5{animation-delay:.78s;}
+@keyframes drawLine{to{transform:scaleX(1);}}
+.mp-badge{
+  position:absolute;top:18px;right:18px;display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:700;background:var(--a-editor-t);color:var(--a-editor);
+  padding:4px 9px;border-radius:20px;opacity:0;
+}
+.scene.active .mp-badge{animation:fadeIn .5s 1s forwards;}
+.mp-badge svg{width:11px;height:11px;}
+
+.cta{
+  display:inline-flex;align-items:center;gap:11px;
+  background:var(--indigo);color:#fff;font-size:17px;font-weight:600;
+  padding:16px 30px;border-radius:14px;
+  box-shadow:0 10px 30px rgba(60,67,160,.32);
+  transition:transform .15s, background .15s, box-shadow .15s;
+}
+.cta:hover{background:var(--indigo-2);transform:translateY(-2px);box-shadow:0 16px 40px rgba(60,67,160,.4);}
+.cta:active{transform:translateY(0);}
+.cta svg{width:19px;height:19px;transition:transform .2s;}
+.cta:hover svg{transform:translateX(4px);}
+.cta-meta{
+  margin-top:18px;font-size:12.5px;color:var(--ink-3);
+  display:inline-flex;align-items:center;gap:9px;
+}
+.cta-meta .ld{width:7px;height:7px;border-radius:50%;background:var(--a-editor);box-shadow:0 0 0 3px var(--a-editor-t);}
+
+/* bottom nav */
+.nav{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:20;
+  display:flex;align-items:center;gap:10px; opacity:0; animation:fadeIn .8s .6s forwards;
+}
+.nav button{
+  width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+  transition:all .15s;
+}
+.nav button:hover:not(:disabled){border-color:var(--indigo);color:var(--indigo);}
+.nav button:disabled{opacity:.4;cursor:default;}
+.nav button svg{width:18px;height:18px;}
+.nav .label{font-family:var(--mono);font-size:11px;color:var(--ink-4);min-width:46px;text-align:center;}
+
+@keyframes fadeIn{to{opacity:1;}}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .r,.agent-card,.mp-line,.mp-badge,.brand,.skip,.progress,.nav{transition:none!important;animation:none!important;opacity:1!important;transform:none!important;}
+  .connector .ln{transform:scaleX(1)!important;}
+  .pdot.active i{animation:none;width:100%;}
+  .agent-card .ping{display:none;}
+}
+
+@media (max-width:760px){
+  .net{flex-wrap:wrap;gap:14px 0;justify-content:center;}
+  .connector{display:none;}
+  .agent-card{width:46%;}
+  .scenes{width:94vw;}
+  .top{padding:16px 18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- top chrome -->
+  <div class="top">
+    <div class="brand">
+      <span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+      <span class="bt">Research &amp; Writing Suite<span>Multi-agent academic writing</span></span>
+    </div>
+    <a class="skip" href="app.html">Skip intro
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <!-- progress -->
+  <div class="progress" id="progress"></div>
+
+  <!-- scenes -->
+  <div class="scenes" id="scenes">
+
+    <!-- SCENE 1 -->
+    <section class="scene" data-dur="4600">
+      <div class="eyebrow r d1"><span class="ln"></span>Multi-agent · Orchestrated<span class="ln"></span></div>
+      <h1 class="head r d2">Four agents.<br>One <em>finished paper.</em></h1>
+      <p class="sub r d4">From a single question to a journal-quality manuscript — researched, written, and edited by a team of AI agents working in concert.</p>
+    </section>
+
+    <!-- SCENE 2 — agent network -->
+    <section class="scene" data-dur="6200">
+      <h2 class="scene-title r d1">Meet the team behind the chat</h2>
+      <p class="scene-lead r d2">You talk to one interface. An Orchestrator routes your request through three specialists.</p>
+      <div class="netwrap">
+        <div class="net">
+          <div class="agent-card s1">
+            <div class="agent-node orch"><span class="ping"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+            <div class="a-nm">Orchestrator</div>
+            <div class="a-role">Reads your message, decides who runs and in what order</div>
+            <div class="a-tool">router</div>
+          </div>
+          <div class="connector c1"><div class="ln"></div></div>
+          <div class="agent-card s2">
+            <div class="agent-node research"><span class="ping"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+            <div class="a-nm">Research</div>
+            <div class="a-role">Searches arXiv &amp; reads links into a structured report</div>
+            <div class="a-tool">arxiv · papers</div>
+          </div>
+          <div class="connector c2"><div class="ln"></div></div>
+          <div class="agent-card s3">
+            <div class="agent-node writer"><span class="ping"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg></div>
+            <div class="a-nm">Writer</div>
+            <div class="a-role">Drafts the full paper, figures, tables &amp; references</div>
+            <div class="a-tool">long-form</div>
+          </div>
+          <div class="connector c3"><div class="ln"></div></div>
+          <div class="agent-card s4">
+            <div class="agent-node editor"><span class="ping"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+            <div class="a-nm">Editor</div>
+            <div class="a-role">Polishes tone, removes AI patterns, scores humanization</div>
+            <div class="a-tool">tone · score</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 3 — workflows -->
+    <section class="scene" data-dur="6000">
+      <h2 class="scene-title r d1">However you start, it knows what to do</h2>
+      <p class="scene-lead r d2">The Orchestrator auto-detects your intent and runs only the agents you need.</p>
+      <div class="flows3">
+        <div class="flow3 r d3">
+          <div class="f3-ico" style="background:var(--a-research-t);color:var(--a-research)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <div class="f3-t">Give a topic</div>
+          <div class="f3-d">A subject or a paper URL — it researches, writes, and edits end to end.</div>
+          <div class="f3-p">Research → Writer → Editor</div>
+        </div>
+        <div class="flow3 r d4">
+          <div class="f3-ico" style="background:var(--a-writer-t);color:var(--a-writer)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg></div>
+          <div class="f3-t">Paste notes</div>
+          <div class="f3-d">Already have findings? It skips retrieval and writes them up.</div>
+          <div class="f3-p">Writer → Editor</div>
+        </div>
+        <div class="flow3 r d5">
+          <div class="f3-ico" style="background:var(--a-editor-t);color:var(--a-editor)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          <div class="f3-t">Drop a draft</div>
+          <div class="f3-d">It edits for voice, tone, and labels — and humanizes the prose.</div>
+          <div class="f3-p">Editor only</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 4 — launch -->
+    <section class="scene" data-dur="0">
+      <div class="launch-wrap">
+        <div class="mini-paper r d1">
+          <span class="mp-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>94/100</span>
+          <div class="mp-venue">Preprint · under review</div>
+          <div class="mp-title">A complete manuscript, assembled live.</div>
+          <div class="mp-line l1"></div>
+          <div class="mp-line l2"></div>
+          <div class="mp-line l3 short"></div>
+          <div class="mp-line l4"></div>
+          <div class="mp-line l5 short"></div>
+        </div>
+        <h2 class="scene-title r d3" style="margin-bottom:6px;">Ready when you are</h2>
+        <p class="scene-lead r d4" style="margin-bottom:30px;">Abstract, sections, figures, tables, citations &amp; Mermaid diagrams — downloadable as Markdown.</p>
+        <a class="cta r d5" href="app.html">
+          Enter the Suite
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <div class="cta-meta r d6"><span class="ld"></span>4 agents online · arXiv-connected</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- bottom nav -->
+  <div class="nav" id="nav">
+    <button id="prev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <span class="label" id="navLabel">01 / 04</span>
+    <button id="next" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var scenes = Array.prototype.slice.call(document.querySelectorAll('.scene'));
+  var n = scenes.length, i = 0, timer = null;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // build progress dots
+  var prog = document.getElementById('progress');
+  var dots = scenes.map(function(_, k){
+    var d = document.createElement('div'); d.className='pdot';
+    d.innerHTML='<i></i>'; d.addEventListener('click',function(){ go(k); });
+    prog.appendChild(d); return d;
+  });
+
+  var prevBtn=document.getElementById('prev'), nextBtn=document.getElementById('next'),
+      label=document.getElementById('navLabel');
+
+  function pad(x){ return (x<10?'0':'')+x; }
+
+  function go(k){
+    if(k<0||k>=n) return;
+    i=k;
+    scenes.forEach(function(s,idx){ s.classList.toggle('active', idx===i); });
+    dots.forEach(function(d,idx){
+      d.classList.remove('active','done');
+      if(idx<i) d.classList.add('done');
+      else if(idx===i) d.classList.add('active');
+    });
+    label.textContent = pad(i+1)+' / '+pad(n);
+    prevBtn.disabled = i===0;
+    nextBtn.disabled = i===n-1;
+    schedule();
+  }
+
+  function schedule(){
+    clearTimeout(timer);
+    if(reduce) return;
+    var dur = parseInt(scenes[i].getAttribute('data-dur'),10)||0;
+    if(dur>0){
+      dots[i].style.setProperty('--dur', dur+'ms');
+      timer = setTimeout(function(){ if(i<n-1) go(i+1); }, dur);
+    }
+  }
+
+  nextBtn.addEventListener('click', function(){ go(i+1); });
+  prevBtn.addEventListener('click', function(){ go(i-1); });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight') go(i+1);
+    else if(e.key==='ArrowLeft') go(i-1);
+    else if(e.key==='Enter' && i===n-1) window.location.href='app.html';
+    else if(e.key==='Escape') window.location.href='app.html';
+  });
+
+  go(0);
+})();
+</script>
+</body>
+</html>

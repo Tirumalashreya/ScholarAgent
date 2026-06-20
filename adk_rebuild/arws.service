@@ -1,0 +1,15 @@
+[Unit]
+Description=A2A Research & Writing Suite
+After=network.target ollama.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/adk_rebuild
+EnvironmentFile=/home/ubuntu/adk_rebuild/.env
+ExecStart=/home/ubuntu/adk_rebuild/venv/bin/uvicorn server:app --host 127.0.0.1 --port 8000 --workers 1
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

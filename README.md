@@ -1,153 +1,170 @@
-# AI Agent-to-Agent Protocol Content Suite
+# A2A Research, Edit & Write Suite
 
-## Table of Contents
-- [Overview](#overview)
-- [Architecture Diagram](#architecture-diagram)
-- [System Components](#system-components)
-- [Agent-to-Agent Protocol](#agent-to-agent-protocol)
-- [Workflows Supported](#workflows-supported)
-- [Setup & Running](#setup--running)
-- [API Endpoints](#api-endpoints)
-- [Extending the System](#extending-the-system)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
+A multi-agent academic writing pipeline that takes a topic, researches it using live arXiv papers, drafts a journal-quality paper, and edits it to publication standard — all coordinated by AI agents.
 
 ---
 
-## Overview
+## Does it use ADK?
 
-This project is a modular, multi-agent system for automated research, writing, and editing, orchestrated via a custom Agent-to-Agent (A2A) protocol. Each agent is specialized and independently deployable, communicating through a standardized protocol. The system is orchestrated by a central agent and exposed via a modern Streamlit frontend.
+Yes. The entire pipeline is built on **Google Agent Development Kit (ADK)**. Every agent is an `LlmAgent` from `google.adk.agents`, orchestrated by ADK's `Runner` and `InMemorySessionService`. ADK handles the agent lifecycle, tool registration, and execution loop.
 
----
+## Is it Multi-Agent?
 
-## Architecture Diagram
-![architecture-diagram (1)](https://github.com/user-attachments/assets/091419dd-fb4a-451f-b834-f36e847d30f1)
+Yes. Four agents work in sequence, each with a distinct role:
 
+```
+User Input
+    │
+    ▼
+┌─────────────────────────────────────────────────────┐
+│  ORCHESTRATOR  (Groq llama-3.1-8b-instant)          │
+│  Reads the user message and decides the route:      │
+│  • Topic given      → full pipeline                 │
+│  • Research notes   → write + edit only             │
+│  • Complete draft   → edit only                     │
+└───────────────────────┬─────────────────────────────┘
+                        │
+          ┌─────────────┼──────────────┐
+          ▼             ▼              ▼
+      [full]         [write]        [edit]
+          │             │              │
+          ▼             │              │
+┌─────────────────┐     │              │
+│  RESEARCHER     │     │              │
+│  Groq 70b       │     │              │
+│  Tools:         │     │              │
+│  • search_arxiv │     │              │
+│  • MCP fetch    │     │              │
+│  Searches arXiv,│     │              │
+│  writes report  │     │              │
+└────────┬────────┘     │              │
+         │              │              │
+         ▼              ▼              │
+┌─────────────────────────────────┐    │
+│  WRITER  (Groq llama-3.3-70b)   │    │
+│  Takes research report or notes │    │
+│  Writes full academic paper:    │    │
+│  Abstract, Intro, Methodology,  │    │
+│  Results, Discussion, References│    │
+└────────────────┬────────────────┘    │
+                 │                     │
+                 ▼                     ▼
+┌─────────────────────────────────────────────────────┐
+│  EDITOR  (Groq llama-3.3-70b)                       │
+│  Polishes the draft:                                │
+│  • Fixes passive voice                              │
+│  • Removes AI-pattern phrasing                      │
+│  • Verifies citations and figure labels             │
+│  • Humanization score                               │
+│  Returns final publication-ready manuscript         │
+└─────────────────────────────────────────────────────┘
+```
 
+## Does it use MCP?
 
+Yes. The Researcher agent uses **Model Context Protocol (MCP)** via `McpToolset` and `mcp-server-fetch`. This gives the agent the ability to fetch any URL — arxiv paper pages, IEEE articles, Nature links — as a live tool call during research.
 
-## System Components
-
-### 1. **Streamlit Frontend**
-- User interface for workflow selection, content input, and result visualization.
-- Connects to the backend via HTTP.
-
-### 2. **FastAPI Backend (`app.py`)**
-- Exposes endpoints for each workflow.
-- Handles CORS for frontend communication.
-- Serves downloadable outputs.
-
-### 3. **Orchestration Agent**
-- Receives user requests, determines workflow, and coordinates agent interactions.
-- Implements workflow logic (Research Only, Edit Only, Write with Research, Full Workflow, Structure/Clean).
-
-### 4. **Research Agent**
-- Conducts comprehensive research, trend analysis, and can structure/clean user-provided research.
-- Uses Google Gemini LLM.
-
-### 5. **Writer Agent**
-- Generates articles and marketing copy, leveraging research data.
-- Uses Google Gemini LLM.
-
-### 6. **Editor Agent**
-- Performs advanced editing, proofreading, and content enhancement.
-- Uses Google Gemini LLM.
-
-### 7. **Outputs Directory**
-- Stores generated PDF and Word files for download.
-
----
-
-## Agent-to-Agent Protocol
-
-- **Standardized Communication**: All agents use the Google A2A v1 protocol.
-- **Endpoints**:
-  - `/a2a/discovery`: Capability discovery.
-  - `/a2a/invoke`: Capability invocation.
-  - `/a2a/health`: Health check.
-- **Capabilities**: Each agent registers its skills with input/output schemas, enabling dynamic orchestration.
-
----
-
-## Workflows Supported
-
-- **Research Only**: Research Agent generates a structured report.
-- **Edit Only**: Editor Agent enhances user-provided content.
-- **Write (with Research)**: Writer Agent creates content based on fresh research.
-- **Full Workflow**: Research → Write → Edit, with export to PDF/Word.
-- **Structure/Clean Research**: Research Agent structures/cleans uploaded or pasted research.
-
----
-
-## Setup & Running
-
-### Prerequisites
-- Python 3.12+
-- [Google Gemini API key](https://ai.google.dev/)
-- macOS (for the provided shell script)
-
-### Installation
-
-1. **Clone the repository** and navigate to the project root.
-
-2. **Create and activate a virtual environment**:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set up environment variables**:
-   - Create a `.env` file in the root directory.
-   - Add your Google Gemini API key:
-     ```
-     GOOGLE_API_KEY=your_api_key_here
-     ```
-
-5. **Start all agents and the API server**:
-   ```bash
-   bash start_all_agents.sh
-   ```
-   This opens new Terminal tabs for each agent and the API server.
-
-6. **Run the Streamlit frontend**:
-   ```bash
-   streamlit run streamlit_app.py
-   ```
-   Access the UI at [http://localhost:8501](http://localhost:8501).
+```python
+McpToolset(
+    connection_params=StdioConnectionParams(
+        server_params=StdioServerParameters(command="uvx", args=["mcp-server-fetch"])
+    )
+)
+```
 
 ---
 
-## API Endpoints
+## Tech Stack
 
-- `/research` — Research Only
-- `/edit` — Edit Only
-- `/write` — Write (with Research)
-- `/full_workflow` — Full Workflow
-- `/structure_research` — Structure/Clean Research
-
----
-
-## Extending the System
-
-- **Add new agent capabilities** by registering new skills in the agent's `_register_capabilities` method.
-- **Add new workflows** by extending the Orchestration Agent and exposing new endpoints in `app.py`.
-- **Integrate new LLMs** by updating the agent's model initialization.
-
----
-
-## Troubleshooting
-
-- **Agents not responding**: Ensure all agents are running (check Terminal tabs).
-- **API key issues**: Verify your `.env` file and that the key is valid.
-- **Frontend not connecting**: Ensure CORS is enabled and all services are running on the correct ports.
+| Layer | Technology |
+|---|---|
+| Agent Framework | Google ADK (Agent Development Kit) |
+| LLM — Routing | Groq `llama-3.1-8b-instant` |
+| LLM — Research | Groq `llama-3.3-70b-versatile` |
+| LLM — Writing | Groq `llama-3.3-70b-versatile` |
+| LLM — Editing | Groq `llama-3.3-70b-versatile` |
+| Tool — arXiv | Custom `search_arxiv` function tool |
+| Tool — Web fetch | MCP `mcp-server-fetch` |
+| Backend | FastAPI + Uvicorn |
+| Auth | JWT (python-jose) + bcrypt |
+| Database | SQLite + SQLAlchemy |
+| Frontend | Vanilla JS + marked.js |
 
 ---
 
-## License
+## Three Pipelines
 
-This project is for internal research and demonstration purposes.
+### 1. Full Pipeline — Topic → Research → Write → Edit
+Give a research topic. The system searches arXiv for real papers, synthesizes a research report, writes a complete academic paper, and edits it.
+
+**Example:**
+> Federated learning for privacy-preserving medical diagnosis in IoT healthcare systems
+
+### 2. Write Pipeline — Notes → Write → Edit
+Paste your own research notes or bullet findings. The system writes and edits a full paper from them.
+
+**Example:**
+> Here are my research notes:
+> - Transformer attention scales quadratically with sequence length
+> - FlashAttention reduces memory via IO-aware tiling
+> - Sparse attention trades recall for speed
+> Write this up as an academic paper.
+
+### 3. Edit Pipeline — Draft → Edit
+Paste a complete draft. The editor fixes passive voice, academic tone, citations, and removes AI-pattern phrasing.
+
+---
+
+## Running Locally
+
+```bash
+# 1. Install dependencies
+cd adk_rebuild
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install uvx
+
+# 2. Set environment variables
+cp .env.example .env
+# Add your GROQ_API_KEY to .env
+
+# 3. Start the server
+uvicorn server:app --host 0.0.0.0 --port 8000
+
+# 4. Open in browser
+open http://localhost:8000
+```
+
+---
+
+## Environment Variables
+
+```env
+GROQ_API_KEY=your_groq_api_key
+JWT_SECRET=your_secret_key
+DATABASE_URL=sqlite:///./data/papers.db
+```
+
+---
+
+## Project Structure
+
+```
+adk_rebuild/
+├── server.py              # FastAPI server, auth endpoints, /chat endpoint
+├── pipeline.py            # ADK orchestration, LLM routing, agent runner
+├── database.py            # SQLAlchemy models (User, Paper)
+├── auth.py                # JWT auth, bcrypt password hashing
+├── agents/
+│   ├── research_agent.py  # Researcher — arXiv search + MCP fetch
+│   ├── writer_agent.py    # Writer — academic paper drafting
+│   └── editor_agent.py    # Editor — polish and humanize
+├── tools/
+│   └── research_tools.py  # search_arxiv function tool
+└── research-suite 2/      # Frontend (HTML, CSS, JS)
+    ├── app.html
+    ├── suite.js
+    ├── suite.css
+    └── paper.js
+```

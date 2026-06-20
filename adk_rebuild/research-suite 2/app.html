@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>document.documentElement.classList.add("preanim");</script>
+<title>Academic Research &amp; Writing Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="suite.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===================== RAIL ===================== -->
+  <aside class="rail" id="rail">
+    <div class="rail-head">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7" stroke-width="1.5"/></svg>
+      </span>
+      <div class="title">Research &amp; Writing Suite<span>Multi-agent academic writing</span></div>
+    </div>
+
+    <button class="new-btn" id="newBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+      New paper
+    </button>
+
+    <div class="rail-scroll" id="railScroll">
+      <!-- sessions rendered dynamically by suite.js -->
+      <div class="rail-empty-hint" id="railEmptyHint">
+        <p>Your papers will appear here after you run the agents.</p>
+      </div>
+    </div>
+
+    <div class="rail-foot">
+      <span class="live-dot"></span>
+      <span class="agents-live">4 agents online</span>
+    </div>
+
+    <div class="rail-auth">
+      <button class="auth-btn" id="btnLogin" type="button">Log in</button>
+      <button class="auth-btn primary" id="btnSignup" type="button">Sign up</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <!-- ===================== CHAT ===================== -->
+  <main class="chat">
+    <div class="chat-head">
+      <button class="rail-toggle" id="railToggle" type="button" aria-label="Sessions">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div>
+        <h2>Conversation</h2>
+        <div class="sub">Describe a topic, paste notes, or drop a draft</div>
+      </div>
+      <div class="agents-status" title="Orchestrator · Research · Writer · Editor">
+        <span class="as-dots">
+          <span style="background:var(--a-orch)"></span>
+          <span style="background:var(--a-research)"></span>
+          <span style="background:var(--a-writer)"></span>
+          <span style="background:var(--a-editor)"></span>
+        </span>
+        <span class="as-txt">4 agents ready</span>
+      </div>
+    </div>
+
+    <div class="thread" id="thread">
+      <div class="thread-inner">
+        <div id="welcome" class="welcome">
+          <div class="eyebrow">Multi-agent · Orchestrated</div>
+          <h1>From a question to a <em>finished paper</em> — coordinated by four AI agents.</h1>
+          <p>One chat. Behind it, an Orchestrator routes your request to Research, Writer, and Editor agents and assembles a complete, journal-quality manuscript.</p>
+
+          <div class="flows">
+            <button class="flow" type="button" data-mode="full"
+              data-prompt="Write a paper on retrieval-augmented generation for low-resource languages.">
+              <span class="f-ico" style="background:var(--a-research-t);color:var(--a-research)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              </span>
+              <span>
+                <span class="f-title">Start from a topic</span>
+                <span class="f-desc">I'll research arXiv, write, and edit it for you.</span>
+                <span class="f-pipe">Research → Writer → Editor</span>
+              </span>
+              <span class="f-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </button>
+
+            <button class="flow" type="button" data-mode="write"
+              data-prompt="Here are my research notes:&#10;- Transformer attention scales quadratically with sequence length&#10;- FlashAttention reduces memory via tiling&#10;- Sparse attention trades recall for speed&#10;Findings: linear-attention variants underperform on long-range retrieval.&#10;Please write this up as a paper.">
+              <span class="f-ico" style="background:var(--a-writer-t);color:var(--a-writer)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>
+              </span>
+              <span>
+                <span class="f-title">I have research notes</span>
+                <span class="f-desc">Skip retrieval — turn my findings into a full paper.</span>
+                <span class="f-pipe">Writer → Editor</span>
+              </span>
+              <span class="f-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </button>
+
+            <button class="flow" type="button" data-mode="edit"
+              data-prompt="Please edit this draft:&#10;&#10;Abstract&#10;In this paper, it is shown that a novel method was developed by the authors. It is demonstrated that the results were improved by the proposed approach. The experiments were conducted and the data was analyzed.&#10;&#10;Introduction&#10;Recently, there has been a lot of interest in this area. Many works have been done. In this paper, we propose a new approach that is better than existing methods.">
+              <span class="f-ico" style="background:var(--a-editor-t);color:var(--a-editor)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </span>
+              <span>
+                <span class="f-title">Polish my draft</span>
+                <span class="f-desc">Fix passive voice, tone, labels — and humanize it.</span>
+                <span class="f-pipe">Editor only</span>
+              </span>
+              <span class="f-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="composer-inner">
+        <div class="mode-row">
+          <span class="mode-label">Route:</span>
+          <button class="mode-pill active" type="button" data-mode="auto">Auto-detect</button>
+          <button class="mode-pill" type="button" data-mode="full">Topic</button>
+          <button class="mode-pill" type="button" data-mode="write">Notes</button>
+          <button class="mode-pill" type="button" data-mode="edit">Draft</button>
+        </div>
+        <div class="input-wrap">
+          <textarea id="input" rows="1" placeholder="Ask for a paper, paste research notes, a draft, or an arXiv / Nature / IEEE URL…"></textarea>
+          <button class="send-btn" id="sendBtn" type="button" aria-label="Send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+          <button class="stop-btn" id="stopBtn" type="button" aria-label="Stop" style="display:none">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+            Stop
+          </button>
+        </div>
+        <div class="hint">The <b>Orchestrator</b> reads your message and decides which agents to run. <b>Enter</b> to send · <b>Shift+Enter</b> for newline.</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================== DOCUMENT WORKSPACE ===================== -->
+  <section class="doc">
+    <div class="doc-head">
+      <button class="doc-back" id="docBack" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Chat
+      </button>
+      <span class="dh-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+        Manuscript
+      </span>
+      <div class="doc-tools">
+        <button class="tool-btn" id="btnCopy" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy MD
+        </button>
+        <button class="tool-btn primary" id="btnDownload" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+          Download .md
+        </button>
+      </div>
+    </div>
+    <div class="doc-scroll" id="docScroll">
+      <div class="doc-empty" id="docEmpty">
+        <div class="de-art"></div>
+        <h3>Your manuscript will appear here</h3>
+        <p>Start a conversation and the agents will assemble a complete paper — abstract, sections, figures, tables, and references — live in this panel.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>
+  <span class="tmsg"></span>
+</div>
+
+<!-- ===================== AUTH MODAL ===================== -->
+<div class="auth-backdrop" id="authBackdrop">
+  <div class="auth-modal" id="authModal" role="dialog" aria-modal="true">
+    <button class="auth-modal-close" id="authModalClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="auth-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" width="28" height="28"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Research &amp; Writing Suite
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" type="button">Log in</button>
+      <button class="auth-tab" id="tabSignup" type="button">Sign up</button>
+    </div>
+    <div id="authFormWrap">
+      <!-- rendered by suite.js -->
+    </div>
+    <p class="auth-note">Your papers are stored locally in this browser.</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="paper.js"></script>
+<script src="suite.js"></script>
+</body>
+</html>

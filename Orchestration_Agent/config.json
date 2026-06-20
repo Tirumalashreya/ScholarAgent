@@ -1,7 +1,0 @@
-{
-    "agents": {
-      "research": "http://localhost:8001",
-      "writer": "http://localhost:8002",
-      "editor": "http://localhost:8003"
-    }
-  }

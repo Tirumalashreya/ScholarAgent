@@ -74,3 +74,13 @@ coverage.xml
 
 # Outputs
 outputs/
+
+# Environment
+.env
+
+# Database
+data/
+*.db
+
+# Logs
+*.log
