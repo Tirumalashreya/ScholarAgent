@@ -1,10 +1,10 @@
-# A2A Research, Edit & Write Suite
+# ScholarAgent
 
-A multi-agent academic writing pipeline that takes a topic, researches it using live arXiv papers, drafts a journal-quality paper, and edits it to publication standard — all coordinated by AI agents.
+A multi-agent academic writing pipeline built with **Google ADK**. Give it a topic — it researches real arXiv papers, drafts a journal-quality paper, and edits it to publication standard. All coordinated by four AI agents.
 
 ---
 
-## Does it use ADK?
+## Does it use Google ADK?
 
 Yes. The entire pipeline is built on **Google Agent Development Kit (ADK)**. Every agent is an `LlmAgent` from `google.adk.agents`, orchestrated by ADK's `Runner` and `InMemorySessionService`. ADK handles the agent lifecycle, tool registration, and execution loop.
 
@@ -17,7 +17,7 @@ User Input
     │
     ▼
 ┌─────────────────────────────────────────────────────┐
-│  ORCHESTRATOR  (Groq llama-3.1-8b-instant)          │
+│  ORCHESTRATOR  (Groq llama-3.1-8b)                  │
 │  Reads the user message and decides the route:      │
 │  • Topic given      → full pipeline                 │
 │  • Research notes   → write + edit only             │
@@ -123,11 +123,12 @@ cd adk_rebuild
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-pip install uvx
 
 # 2. Set environment variables
-cp .env.example .env
-# Add your GROQ_API_KEY to .env
+# Create .env with:
+# GROQ_API_KEY=your_groq_api_key
+# JWT_SECRET=your_secret_key
+# DATABASE_URL=sqlite:///./data/papers.db
 
 # 3. Start the server
 uvicorn server:app --host 0.0.0.0 --port 8000
