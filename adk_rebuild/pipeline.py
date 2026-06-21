@@ -183,13 +183,16 @@ def _make_mcp():
     )
 
 
-ROUTER_INSTRUCTION = """You are a routing agent. Read the user message and output EXACTLY one word:
+ROUTER_INSTRUCTION = """You are a routing agent. Read the user message and output EXACTLY one word.
 
-full   — user gave a research topic or question
-write  — user gave research notes or bullet findings
-edit   — user gave a complete draft paper
+Rules:
+full  — the message is a research topic, question, or subject to investigate (e.g. "federated learning in healthcare", "write a paper on transformers")
+write — the message contains bullet points, research notes, findings, or data and asks to write a paper FROM them (keywords: "here are my notes", "write from these", "research notes", "bullet", "findings")
+edit  — the message contains a COMPLETE paper draft with Abstract, Introduction, sections already written and asks to edit/improve/polish it
 
-Output only the single word. Nothing else."""
+When in doubt between write and edit: if there is no Abstract or Introduction already written, choose write.
+
+Output only one word: full or write or edit. Nothing else."""
 
 
 async def _run_agent(agent, message: str, session_id: str) -> str:
